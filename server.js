@@ -30,7 +30,7 @@ mongoose.connect(DB_URL, {
     
 
 
-// Core middleware
+// Core middleware/
 app.use(express.json());
 app.use(cors());
 app.use(helmet());
@@ -38,3 +38,8 @@ app.use(helmet());
 
 
 app.use('/api/user', user)
+app.get('/',(req, res) => {
+    res.json({
+            message: 'Hello World'
+        })
+})
