@@ -32,11 +32,7 @@ mongoose.connect(DB_URL, {
 
 // Core middleware
 app.use(express.json());
-app.use(cors({
-    origin: "http://localhost:3000",
-    origin: "https://investment.hashroi.online"
-
-}));
+app.use(cors());
 app.use(helmet());
 
 
