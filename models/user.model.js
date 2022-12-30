@@ -33,7 +33,12 @@ const userSchema = new Schema({
         type: Number,
         default: 0
     },
-    
+    referral: {
+        type: Number,
+    },
+    referralCode: {
+        type: Number,
+    },
     withdraw: [{
         type: mongoose.Types.ObjectId,
         ref: "withdrawal"
@@ -62,7 +67,7 @@ const withdrawalsSchema = new Schema({
     },
     address:{
         type: String,
-        required: true
+    
     }
 
     
@@ -103,29 +108,31 @@ const plansSchema = new Schema({
         required: true
     },
     isPending:{
-        type: Number,
-        default: 1
+        type: String,
+        required: true
+        
     },
     isMined:{
         type: Number,
         default: 0
     },
     isCurrent:{
-        type: Number,
-        default: 0
+        type: String,
+        required: true
+        
     },
    
 
 }, {timestamps: true})
 
 //  statics signup method
-userSchema.statics.signup = async function (name, email, password, bitcoinAddress, liteAddress, ethAddress, tetherAddress ) {
+userSchema.statics.signup = async function (name, email, password, bitcoinAddress, liteAddress, ethAddress, tetherAddress, referral, referralCode ) {
 
     // validation
     if (!email || !password){
         throw Error('All fields must be filled')
     }
-    if(!bitcoinAddress && !liteAddress && ! ethAddress && !tetherAddress){
+    if(!bitcoinAddress && !liteAddress && !ethAddress && !tetherAddress){
         throw Error('Please add an address for you withdrawals')
     }
 
@@ -139,9 +146,9 @@ userSchema.statics.signup = async function (name, email, password, bitcoinAddres
         throw Error('Email already in use')
     }
 
-    const salt = await bcrypt.genSalt(10)
-    const hashpassword  = await bcrypt.hash(password, salt) 
-    const newUser = await this.create({name, email, password:hashpassword, bitcoinAddress, liteAddress, ethAddress, tetherAddress})
+    // const salt = await bcrypt.genSalt(10)
+    // const hashpassword  = await bcrypt.hash(password, salt) 
+    const newUser = await this.create({name, email, password, bitcoinAddress, liteAddress, ethAddress, tetherAddress, referral, referralCode })
     return newUser
 
 }
@@ -159,7 +166,7 @@ userSchema.statics.login = async function (email, password) {
         throw Error('invalid user')
     }
 
-    const match = await bcrypt.compare(password, user.password )
+    const match = ( user.password )
     if(!match){
         throw Error('invalid user')
     }
