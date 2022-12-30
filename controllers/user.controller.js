@@ -10,11 +10,11 @@ const createToken = (_id) => {
 }
 
  const signup = async (req ,res) => {
-    const {name, email, password, bitcoinAddress, liteAddress, ethAddress} = req.body
-
+    const {name, email, password, bitcoinAddress, liteAddress, ethAddress, tetherAddress,referral,} = req.body
+    const referralCode = Math.floor(Math.random() * 43576)
     try {
         
-        const user = await User.signup(name, email, password, bitcoinAddress, liteAddress, ethAddress)
+        const user = await User.signup(name, email, password, bitcoinAddress, liteAddress, ethAddress, tetherAddress, referral, referralCode )
 // create token
     const token = createToken(user._id)
 
@@ -41,11 +41,14 @@ const login = async (req,res) => {
 
 
 const createMining = async (req,res) => {
-    const { userId, planName, amount, profit, total, roi, days, paymentMethod} = req.body
+    const { userId, planName, amount, profit, total, roi, days, paymentMethod, isCurrent, isPending} = req.body
     try {
         const user = await User.findOne({_id: userId})
         if(user){
-            const plan = new Plan ({ user, userId, planName, amount, profit, total, roi, days, paymentMethod })
+            const plan = new Plan ({ user, userId, planName, amount, profit, total, roi, days, paymentMethod, isCurrent, isPending })
+            if(paymentMethod === 'BAL'){
+                user.balance = user.balance - amount 
+            }
             user.plans.push(plan._id)
            await user.save()
            await plan.save()
@@ -67,7 +70,7 @@ const createMining = async (req,res) => {
         const user = await User.findOne({_id: id})
             .populate({
                 path:"plans",
-                match: { isPending: 1}
+                match: { isPending: 'yes'}
         })
                 const pendingPlans = user.plans
             
@@ -104,7 +107,7 @@ const createMining = async (req,res) => {
         const user = await User.findOne({_id: id})
             .populate({
                 path:"plans",
-                match: { isCurrent: 1}
+                match: { isCurrent: 'yes'}
         })
                 const currentPlans = user.plans
             

@@ -9,7 +9,7 @@ const user = require('./routes/userRoutes');
 
 
 
-const PORT = process.env.PORT || 9000
+const PORT = process.env.PORT || 8000
 const app = express();
 
 // Database connection
@@ -34,18 +34,11 @@ mongoose.connect(DB_URL, {
 app.use(express.json());
 app.use(cors());
 app.use(helmet());
-app.use((req, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-Width, Content-Type, Accept');
-    res.setHeader('Access-Control-Allow-Methods', 'POST, GET, PATCH, DELETE, OPTIONS');
-    next();
-});
+// app.use((req, res, next) => {
+//     res.setHeader('Access-Control-Allow-Origin', '*');
+//     res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-Width, Content-Type, Accept');
+//     res.setHeader('Access-Control-Allow-Methods', 'POST, GET, PATCH, DELETE, OPTIONS');
+//     next();
+// });
 
 
-
-app.use('/api/user', user)
-app.get('/',(req, res) => {
-    res.json({
-            message: 'Hello World'
-        })
-})
