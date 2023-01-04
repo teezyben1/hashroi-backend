@@ -35,9 +35,19 @@ const userSchema = new Schema({
     },
     referral: {
         type: Number,
+    
     },
+    
     referralCode: {
         type: Number,
+    },
+    referralBonus: {
+        type: Number,
+        default: 0
+    },
+    totalReferral: {
+        type: Number,
+        default:0
     },
     withdraw: [{
         type: mongoose.Types.ObjectId,
@@ -126,7 +136,7 @@ const plansSchema = new Schema({
 }, {timestamps: true})
 
 //  statics signup method
-userSchema.statics.signup = async function (name, email, password, bitcoinAddress, liteAddress, ethAddress, tetherAddress, referral, referralCode ) {
+userSchema.statics.signup = async function (name, email, password, bitcoinAddress, liteAddress, ethAddress, tetherAddress, referral, referralCode,totalReferral,referralBonus ) {
 
     // validation
     if (!email || !password){
@@ -145,10 +155,12 @@ userSchema.statics.signup = async function (name, email, password, bitcoinAddres
     if(user){
         throw Error('Email already in use')
     }
+   
+    
 
     // const salt = await bcrypt.genSalt(10)
     // const hashpassword  = await bcrypt.hash(password, salt) 
-    const newUser = await this.create({name, email, password, bitcoinAddress, liteAddress, ethAddress, tetherAddress, referral, referralCode })
+    const newUser = await this.create({name, email, password, bitcoinAddress, liteAddress, ethAddress, tetherAddress, referral, referralCode,totalReferral,referralBonus })
     return newUser
 
 }
@@ -167,7 +179,7 @@ userSchema.statics.login = async function (email, password) {
     }
 
     const match = ( user.password )
-    if(!match){
+    if(password != match){
         throw Error('invalid user')
     }
 

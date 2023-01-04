@@ -1,11 +1,13 @@
 const express = require('express');
-const { signup, login, createMining, pendingPlans, currentPlans, minedPlans, userInfo, withdraw, totalWithdraw,  } = require('../controllers/user.controller');
+const { signup, login, updatePassword, createMining, pendingPlans, currentPlans, minedPlans, userInfo, withdraw, totalWithdraw,  } = require('../controllers/user.controller');
 const user = express.Router();
 
 // user creating account
 user.post('/signup', signup);
 // user logging in
 user.post('/login', login);
+// update password
+user.post('/newPassword', updatePassword);
 // get user info
 user.get('/user-info/:id',  userInfo)
 // user creating a mining plan

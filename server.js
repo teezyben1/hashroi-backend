@@ -13,7 +13,7 @@ const PORT = process.env.PORT || 8000
 const app = express();
 
 // Database connection
-const DB_URL = process.env.MONGO_URL_PRO
+const DB_URL = process.env.MONGO_URL_DEV
 mongoose.set('strictQuery', true);
 mongoose.connect(DB_URL, {
     useNewUrlParser: true,
