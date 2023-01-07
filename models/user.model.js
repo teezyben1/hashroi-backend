@@ -131,16 +131,27 @@ const plansSchema = new Schema({
         required: true
         
     },
+    trxnId:{
+        type: String,
+    },
+    miningId:{
+        type: Number,
+        
+        
+    },
    
 
 }, {timestamps: true})
 
 //  statics signup method
-userSchema.statics.signup = async function (name, email, password, bitcoinAddress, liteAddress, ethAddress, tetherAddress, referral, referralCode,totalReferral,referralBonus ) {
+userSchema.statics.signup = async function (name, email, password, bitcoinAddress, liteAddress, ethAddress, tetherAddress, referral, referralCode,totalReferral,referralBonus,  ) {
 
     // validation
     if (!email || !password){
         throw Error('All fields must be filled')
+    }
+    if (referral.length < 5){
+        throw Error('referral code must 5 digit number')
     }
     if(!bitcoinAddress && !liteAddress && !ethAddress && !tetherAddress){
         throw Error('Please add an address for you withdrawals')
@@ -149,7 +160,9 @@ userSchema.statics.signup = async function (name, email, password, bitcoinAddres
     if (!validator.isEmail(email)){
         throw Error('Email is not valid')
     }
-
+    if (error.message.include(MongoDB)){
+        throw Error('Please check your internet connection')
+    }rs
 
     const user = await this.findOne({ email })
     if(user){
@@ -160,7 +173,7 @@ userSchema.statics.signup = async function (name, email, password, bitcoinAddres
 
     // const salt = await bcrypt.genSalt(10)
     // const hashpassword  = await bcrypt.hash(password, salt) 
-    const newUser = await this.create({name, email, password, bitcoinAddress, liteAddress, ethAddress, tetherAddress, referral, referralCode,totalReferral,referralBonus })
+    const newUser = await this.create({name, email, password, bitcoinAddress, liteAddress, ethAddress, tetherAddress, referral, referralCode,totalReferral,referralBonus})
     return newUser
 
 }

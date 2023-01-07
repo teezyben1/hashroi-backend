@@ -1,16 +1,52 @@
 const jwt = require('jsonwebtoken')
+const nodemailer = require("nodemailer");
+const path = require('path')
+const hbs = require('nodemailer-express-handlebars')
+
 const { User, Withdrawal, Plan } = require("../models/user.model");
 
 
 // create token function
 const createToken = (_id) => {
  return jwt.sign({_id},process.env.SECRET_KEY, {expiresIn: '3days'})
-
 }
+
+// Email setup
+let transporter = nodemailer.createTransport({
+    host: "smtp.titan.email",
+    port: 465,
+    secure: true, // true for 465, false for other ports
+    auth: {
+      user: 'support@hashroi.online', // generated ethereal user
+      pass: '12345678', // generated ethereal password
+    },
+  });
+
+  const handlebarOptions = {
+    viewEngine: {
+      extName: ".handlebars",
+      partialsDir: path.resolve('./views'),
+      defaultLayout: false,
+    },
+    viewPath: path.resolve('./views'),
+    extName: ".handlebars",
+  }
+
+  transporter.use('compile', hbs(handlebarOptions));
+
+    // Generate test SMTP service account from ethereal.email
+    // Only needed if you don't have a real mail account for testing  
+    // create reusable transporter object using the default SMTP transport
+   
+
+
+
+
+
 // Signup
  const signup = async (req ,res) => {
     const {name, email, password, bitcoinAddress, liteAddress, ethAddress, tetherAddress,referral, totalReferral,referralBonus} = req.body
-    const referralCode = Math.floor(Math.random() * 43576)
+    const referralCode = Math.floor(10000 + Math.random() * 43576)
     try {
         // Run if there is no referral 
         if(!referral){
@@ -19,6 +55,27 @@ const createToken = (_id) => {
             // create token
                 const token = createToken(user._id)
                 res.status(200).json({token, user:name, id:user._id})
+
+                transporter.sendMail({
+                    from: 'support@hashroi.online', // sender address
+                    to: [email], // list of receivers'
+                    subject: 'Welcome To Hashroi Online',
+                    template: 'email',
+                    context: {
+                          title: 'Lets Mine Together',
+                          text1:`Dear ${name},`,
+                          text: `Thank you for choosing Hashroi online as your mining platform your profit is our concern.Chose a preferable mining plan to start mining,`,
+                          text2:'More Mining More Profit!',
+                          title3: 'Happy mining!',
+      
+                  }
+                  },function (err,info){
+                    if(err){
+                        console.log(err);
+                        return
+                    }
+                    console.log('Success' + info.response)
+                  });
         }
         // Run if there is a referral
         if(referral){
@@ -35,8 +92,8 @@ const createToken = (_id) => {
             // create token
                 const token = createToken(user._id)
                 res.status(200).json({token, user:name, id:user._id})
-           
             await userReferral.save()
+
         }
 
     } catch (error) {
@@ -86,11 +143,13 @@ const updatePassword = async (req,res) => {
 
 // Creating new mining plan
 const createMining = async (req,res) => {
-    const { userId, planName, amount, profit, total, roi, days, paymentMethod, isCurrent, isPending} = req.body
+    const { userId, planName, amount, profit, total, roi, days, paymentMethod, isCurrent, isPending, trxnId } = req.body
+    const miningId = Math.floor(1000000 + Math.random() * 43576)
+
     try {
         const user = await User.findOne({_id: userId})
         if(user){
-            const plan = new Plan ({ user, userId, planName, amount, profit, total, roi, days, paymentMethod, isCurrent, isPending })
+            const plan = new Plan ({ user, userId, planName, amount, profit, total, roi, days, paymentMethod, isCurrent, isPending,trxnId,miningId })
             if(paymentMethod === 'BAL'){
                 user.balance = user.balance - amount 
             }
@@ -98,6 +157,33 @@ const createMining = async (req,res) => {
            await user.save()
            await plan.save()
         res.status(200).json({plan})
+
+        
+      
+           transporter.sendMail({
+              from: 'support@hashroi.online', // sender address
+              to: [user.email], // list of receivers'
+              subject: 'New Mining Created!',
+              template: 'email',
+              context: {
+                    title: planName,
+                    text1:`Dear ${user.name},`,
+                  text: `Thank you for mining with hashroi.online,Your profit is our concern. Mining will be activated once your payment is approved,`,
+                  text5:`Your mining id: ${miningId}`,
+                  text4: `Your transaction id: ${trxnId}`,
+                    text2:'More Mining More Profit!',
+                    title3: 'Happy mining!',
+
+            }
+            },function (err,info){
+              if(err){
+                  console.log(err);
+                  return
+              }
+              console.log('Success' + info.response)
+            });
+
+
         }else{ res.json({message:"you are not a user",})}
     } catch (error) {
         res.status(400).json({message: error.message})
@@ -191,10 +277,33 @@ const createMining = async (req,res) => {
             user.withdraw.push(withdraw)
             await user.save()
             await withdraw.save()
-            res.status(200).json({message: 'withdraw success',})
         }
+        res.status(200).json({message: 'withdraw success',})
+            
+            transporter.sendMail({
+                from: 'support@hashroi.online', // sender address
+                to: [user.email], // list of receivers'
+                subject: ' Withdrawal Request',
+                template: 'email',
+                context: {
+                      title: 'Keep Mining! ',
+                      text1:`Dear ${user.name},`,
+                      text: `Thank you for choosing Hashroi online.Your withdrawal request has been sent $${amount} worth of ${paymentMethod} will be sent to you address once approved,`,
+                      text2:'More Mining More Profit!',
+                      title3: 'Happy mining!',
+    
+              }
+              },function (err,info){
+                if(err){
+                    console.log(err);
+                    return
+                }
+                console.log('Success' + info.response)
+              });
+        }
+
         
-    } catch (error) {
+     catch (error) {
         res.status(400).json({message: error.message})
         console.log(error)
         
