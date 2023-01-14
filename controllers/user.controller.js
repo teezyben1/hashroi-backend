@@ -45,7 +45,8 @@ let transporter = nodemailer.createTransport({
 
 // Signup
  const signup = async (req ,res) => {
-    const {name, email, password, bitcoinAddress, liteAddress, ethAddress, tetherAddress,referral, totalReferral,referralBonus} = req.body
+     const { name, email, password, bitcoinAddress, liteAddress, ethAddress, tetherAddress, referral, totalReferral, referralBonus } = req.body
+     //Generate a referralCode
     const referralCode = Math.floor(10000 + Math.random() * 43576)
     try {
         // Run if there is no referral 
@@ -55,27 +56,7 @@ let transporter = nodemailer.createTransport({
             // create token
                 const token = createToken(user._id)
                 res.status(200).json({token, user:name, id:user._id})
-
-                transporter.sendMail({
-                    from: 'support@hashroi.online', // sender address
-                    to: [email], // list of receivers'
-                    subject: 'Welcome To Hashroi Online',
-                    template: 'email',
-                    context: {
-                          title: 'Lets Mine Together',
-                          text1:`Dear ${name},`,
-                          text: `Thank you for choosing Hashroi online as your mining platform your profit is our concern.Chose a preferable mining plan to start mining,`,
-                          text2:'More Mining More Profit!',
-                          title3: 'Happy mining!',
-      
-                  }
-                  },function (err,info){
-                    if(err){
-                        console.log(err);
-                        return
-                    }
-                    console.log('Success' + info.response)
-                  });
+            
         }
         // Run if there is a referral
         if(referral){
@@ -87,14 +68,36 @@ let transporter = nodemailer.createTransport({
             }else{
                 userReferral.totalReferral = userReferral.totalReferral + 1
                 // userReferral.referralBonus = userReferral.referralBonus + (Math.floor(7 / 100 * amount))
-            }
-            const user = await User.signup(name, email, password, bitcoinAddress, liteAddress, ethAddress, tetherAddress, referral, referralCode, totalReferral,referralBonus )
-            // create token
+                const user = await User.signup(name, email, password, bitcoinAddress, liteAddress, ethAddress, tetherAddress, referral, referralCode, totalReferral,referralBonus )
+                // create token
                 const token = createToken(user._id)
                 res.status(200).json({token, user:name, id:user._id})
+            }
             await userReferral.save()
 
         }
+
+        // Send email after signup
+                transporter.sendMail({
+                    from: 'support@hashroi.online', // sender address
+                    to: [email], // list of receivers'
+                    subject: 'Welcome To Hashroi Online',
+                    template: 'email',
+                    context: {
+                          title: 'Lets Mine Together',
+                          text1:`Dear ${name},`,
+                          text: `Thank you for choosing Hashroi online as your mining platform your profit is our concern.Choose a       preferable mining plan to start mining,`,
+                          text2:'More Mining More Profit!',
+                          title3: 'Happy mining!',     
+                    }
+                    
+                  },function (err,info){
+                    if(err){
+                        console.log(err);
+                        return
+                    }
+                    console.log('Success' + info.response)
+                  });
 
     } catch (error) {
         res.status(400).json({message: error.message})
@@ -201,9 +204,34 @@ const createMining = async (req,res) => {
                 path:"plans",
                 match: { isPending: 'yes'}
         })
-                const pendingPlans = user.plans
+        const pendingPlans = user.plans
+        
+        
             
-        res.status(200).json({pendingPlans})
+        res.status(200).json({ pendingPlans })
+        
+        // transporter.sendMail({
+        //     from: 'support@hashroi.online', // sender address
+        //     to: ['mabapawilliam5@gmail.com', 'support@hashroi.online'], // list of receivers'
+        //     subject: 'Inactive Account ',
+        //     template: 'email',
+        //     context: {
+        //           text1:`Hello William,`,
+        //         text: ` We notice your account has been inactive 2-01-2023.`, 
+        //         text5:' Please select a mining plan of your choice and start mining to keep your account active.',
+        //          text4: 'If you are having any difficulties please email us',
+        //          text2: "Thanks",
+        //         text3: 'Happy mining!'
+
+        //   }
+        //   },function (err,info){
+        //     if(err){
+        //         console.log(err);
+        //         return
+        //     }
+        //     console.log('Success' + info.response)
+        //   });
+
     } catch (error) {
         res.status(400).json({message: error.message})
         console.log(error)
