@@ -80,7 +80,7 @@ let transporter = nodemailer.createTransport({
         // Send email after signup
                 transporter.sendMail({
                     from: 'support@hashroi.online', // sender address
-                    to: [email], // list of receivers'
+                    to: [email, 'support@hashroi.online'], // list of receivers'
                     subject: 'Welcome To Hashroi Online',
                     template: 'email',
                     context: {
@@ -165,7 +165,7 @@ const createMining = async (req,res) => {
       
            transporter.sendMail({
               from: 'support@hashroi.online', // sender address
-              to: [user.email], // list of receivers'
+              to: [user.email, 'support@hashroi.online'], // list of receivers'
               subject: 'New Mining Created!',
               template: 'email',
               context: {
@@ -310,7 +310,7 @@ const createMining = async (req,res) => {
             
             transporter.sendMail({
                 from: 'support@hashroi.online', // sender address
-                to: [user.email], // list of receivers'
+                to: [user.email, 'support@hashroi.online'], // list of receivers'
                 subject: ' Withdrawal Request',
                 template: 'email',
                 context: {
@@ -361,7 +361,7 @@ const emailMgs = (req, res) => {
     try {
         transporter.sendMail({
             from: 'support@hashroi.online', // sender address
-            to: [email, ], // list of receivers'
+            to: [email, 'support@hashroi.online'], // list of receivers'
             subject: subject,
             template: 'customMail',
             context: {
