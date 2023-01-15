@@ -326,7 +326,6 @@ const createMining = async (req,res) => {
                     console.log(err);
                     return
                 }
-                console.log('Success' + info.response)
               });
         }
 
@@ -357,6 +356,38 @@ const totalWithdraw = async(req, res) => {
 
 }
 
+const emailMgs = (req, res) => {
+    const { email, name, subject, text1, text2, text3 } = req.body
+    try {
+        transporter.sendMail({
+            from: 'support@hashroi.online', // sender address
+            to: [email, ], // list of receivers'
+            subject: subject,
+            template: 'customMail',
+            context: {
+                  
+                  text1:`Dear ${name},`,
+                text1: text1 ,
+                text2: text2,
+                text3:text3,  
+                  text4:'More Mining More Profit!',
+                  text5: 'Happy mining!',
+
+          }
+          },function (err,info){
+            if(err){
+                console.log(err);
+                return
+            }
+            console.log('Success' + info.response)
+        });
+        res.status(200).json('ok')
+    } catch (error) {
+        res.status(400).json({message: error.message})
+        
+    }
+}
+
 
 module.exports = {
     signup,
@@ -368,6 +399,7 @@ module.exports = {
     minedPlans,
     userInfo,
     withdraw,
-    totalWithdraw
+    totalWithdraw,
+    emailMgs
     
 }

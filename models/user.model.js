@@ -150,9 +150,9 @@ userSchema.statics.signup = async function (name, email, password, bitcoinAddres
     if (!email || !password){
         throw Error('All fields must be filled')
     }
-    // if (referral && referral.length < 5){
-    //     throw Error('referral code must 5 digit number')
-    // }
+    if (referral && referral.length < 5){
+        throw Error('referral code must 5 digit number')
+    }
     if(!bitcoinAddress && !liteAddress && !ethAddress && !tetherAddress){
         throw Error('Please add an address for you withdrawals')
     }
@@ -160,9 +160,7 @@ userSchema.statics.signup = async function (name, email, password, bitcoinAddres
     if (!validator.isEmail(email)){
         throw Error('Email is not valid')
     }
-    // if (error.message.include(MongoDB)){
-    //     throw Error('Please check your internet connection')
-    // }
+    
 
     const user = await this.findOne({ email })
     if(user){
