@@ -366,7 +366,7 @@ const emailMgs = (req, res) => {
             template: 'customMail',
             context: {
                   
-                  text1:`Dear ${name},`,
+                  title:`Dear ${name},`,
                 text1: text1 ,
                 text2: text2,
                 text3:text3,  
