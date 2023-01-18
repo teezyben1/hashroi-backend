@@ -381,7 +381,7 @@ const emailMgs = (req, res) => {
             }
             console.log('Success' + info.response)
         });
-        res.status(200).json('ok')
+        // res.status(200).json('ok')
     } catch (error) {
         res.status(400).json({message: error.message})
         
