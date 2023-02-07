@@ -198,11 +198,12 @@ const createMining = async (req,res) => {
 // Get pending plans
  const pendingPlans = async (req,res) =>{
     const id = req.params.id
-    try {
-        const user = await User.findOne({_id: id})
-            .populate({
-                path:"plans",
-                match: { isPending: 'yes'}
+     try {
+         const user = await User.findOne({ _id: id })
+             .populate({
+                 path: "plans",
+                 match: { isPending: 'yes' },
+                 options:{sort:[{'createdAt': 'desc'}]}
         })
         const pendingPlans = user.plans
         
@@ -210,27 +211,7 @@ const createMining = async (req,res) => {
             
         res.status(200).json({ pendingPlans })
         
-        // transporter.sendMail({
-        //     from: 'support@hashroi.online', // sender address
-        //     to: ['mabapawilliam5@gmail.com', 'support@hashroi.online'], // list of receivers'
-        //     subject: 'Inactive Account ',
-        //     template: 'email',
-        //     context: {
-        //           text1:`Hello William,`,
-        //         text: ` We notice your account has been inactive 2-01-2023.`, 
-        //         text5:' Please select a mining plan of your choice and start mining to keep your account active.',
-        //          text4: 'If you are having any difficulties please email us',
-        //          text2: "Thanks",
-        //         text3: 'Happy mining!'
-
-        //   }
-        //   },function (err,info){
-        //     if(err){
-        //         console.log(err);
-        //         return
-        //     }
-        //     console.log('Success' + info.response)
-        //   });
+        
 
     } catch (error) {
         res.status(400).json({message: error.message})
@@ -264,7 +245,8 @@ const createMining = async (req,res) => {
         const user = await User.findOne({_id: id})
             .populate({
                 path:"plans",
-                match: { isCurrent: 'yes'}
+                match: { isCurrent: 'yes' },
+                options:{sort:[{'createdAt': 'desc'}]}
         })
                 const currentPlans = user.plans
             
@@ -283,7 +265,8 @@ const createMining = async (req,res) => {
         const user = await User.findOne({_id: id})
             .populate({
                 path:"plans",
-                match: { isMined: 1}
+                match: { isMined: 1 },
+                options:{sort:[{'createdAt': 'desc'}]}
         })
                 const minedPlans = user.plans
         res.status(200).json({minedPlans})
