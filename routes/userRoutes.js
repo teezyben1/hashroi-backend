@@ -1,5 +1,5 @@
 const express = require('express');
-const { signup, login, updatePassword, createMining, pendingPlans, currentPlans, minedPlans, userInfo, withdraw, totalWithdraw, emailMgs,  } = require('../controllers/user.controller');
+const { signup, login, updatePassword, createMining, pendingPlans, currentPlans, minedPlans, userInfo, withdraw, emailMgs, getUsers, totalWithdraw, } = require('../controllers/user.controller');
 const user = express.Router();
 
 // user creating account
@@ -23,7 +23,10 @@ user.get('/mined-plans/:id',  minedPlans);
 // user requesting for total withdrawals
 user.get('/withdrawals/:id', totalWithdraw);
 // custom mail route
-user.post('/email100', emailMgs)
+user.post('/email', emailMgs)
+// // get users
+user.get('/users', getUsers);
+
 
 
 module.exports = user

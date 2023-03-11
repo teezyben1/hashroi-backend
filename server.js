@@ -4,6 +4,7 @@ const helmet = require('helmet');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const user = require('./routes/userRoutes');
+const admin = require('./routes/adminRoutes');
 
 
 
@@ -44,8 +45,10 @@ app.use(helmet());
 
 
 app.use('/api/user', user)
+app.use('/api/admin', admin)
+
 app.get('/',(req, res) => {
     res.json({
-            message: 'Hello World'
+            message: 'Hello hashroi'
         })
 })
